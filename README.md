@@ -146,6 +146,40 @@ Custom 애노테이션이 유지되는 기간을 나타낸다.
 - RetentionPolicy.CLASS: 클래스 파일에 존재하며 런타임에 사용 불가능하다. (기본값)
 - RetentionPolicy.SOURCE: 소스 파일에만 존재. 클래스파일에는 존재하지 않는다.
 
+## Annotation Processor
+
+애노테이션들이 실제 코드에 녹아지고 사용되기 위해서는 애노테이션 프로세싱이라는 과정이 필요하다.  
+애노테이션 프로세싱은 컴파일 타임에 애노테이션들을 스캐닝하고 프로세싱하는 javac 에 속한 빌드툴이다.  
+
+특정 애노테이션들을 위해 애노테이션 프로세서를 만들어서 등록할 수 있다.  
+특정 애노테이션을 위한 애노테이션 프로세서는 자바 코드를 인풋으로 받아서 아웃풋으로 파일을 생성한다.
+
+#### AbstractProcessor
+
+모든 프로세서들은 AbstractProcessor 를 상속받아야 한다.  
+
+init(ProcessingEnvironment processingEnv)
+
+모든 애노테이션 프로세서 클래스는 empty 생성자를 반드시 가져야한다.  
+대신, ProcessingEnvironment 를 매개변수로 받아 애노테이션 프로세싱 툴이 호출하는 특별한 init() 메서드를 가지고 있다.  
+ProcessingEnvironment 는 Elements, Types, Filer 와 같이 유용한 유틸 클래스들을 제공한다.
+
+process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv)
+  
+각각의 프로세서의 main() 메서드의 역할을 한다. 여기에 애노테이션을 스캐닝, 평가 및 처리하고 Java 파일 생성을 위한 코드를 작성한다.  
+RoundEnvironment 매개변수로 특정 애노테이션이 달린 것들을 찾을 수 있다.
+
+getSupportedAnnotationTypes()
+
+여기에 애노테이션 프로세서가 처리할 애노테이션들을 명시한다.  
+리턴 타입은 이 애노테이션 프로세서가 처리하길 원하는 애노테이션의 full qualified name 을 포함한 Set<String> 이다.  
+즉, 여기에 애노테이션 프로세서가 처리하길 원하는 애노테이션들을 정의해야한다.  
+
+getSupportedSourceVersion()
+
+사용하는 특정 Java 버전을 명시하는데 사용한다.  
+보통 SourceVersion.latestSupported() 를 리턴하면 된다.
+
 <hr>
 
 #### References
@@ -155,3 +189,4 @@ Custom 애노테이션이 유지되는 기간을 나타낸다.
 > - [baeldung | Overview of Java Built-in Annotations](https://www.baeldung.com/java-default-annotations)
 > - [baeldung | Creating a Custom Annotation in Java](https://www.baeldung.com/java-custom-annotation)
 > - [beginnersbook | Java Annotations tutorial with examples](https://beginnersbook.com/2014/09/java-annotations/)
+> - [hannesdorfmann | Annotation Processing 101](https://hannesdorfmann.com/annotation-processing/annotationprocessing101/)
